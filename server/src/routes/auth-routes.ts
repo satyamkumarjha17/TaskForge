@@ -1,0 +1,14 @@
+import { Router } from 'express';
+import rateLimit from 'express-rate-limit';
+import * as auth from '../controllers/auth-controller.js';
+import { requireAuth } from '../middleware/auth.js';
+import { validateBody } from '../middleware/validate.js';
+import { loginSchema, registerSchema } from '../validators/schemas.js';
+const router = Router();
+const authLimiter = rateLimit({ windowMs: 15 * 60 * 1000, limit: 10, standardHeaders: 'draft-7', legacyHeaders: false, message: { error: { code: 'RATE_LIMITED', message: 'Too many attempts. Try again later.' } } });
+router.get('/csrf', auth.csrf);
+router.post('/register', authLimiter, validateBody(registerSchema), auth.register);
+router.post('/login', authLimiter, validateBody(loginSchema), auth.login);
+router.post('/logout', auth.logout);
+router.get('/me', requireAuth, auth.me);
+export default router;

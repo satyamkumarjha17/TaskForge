@@ -1,0 +1,887 @@
+# TASKFORGE — COMPLETE FULL-STACK APPLICATION
+## Fresh Start | Complete Implementation | Final Testing
+
+You are working on TaskForge, a full-stack SaaS task management application.
+
+I want you to build the complete application from scratch in this project directory.
+
+This is a single complete implementation assignment. Do not divide development into M0, M1, M2, or other approval-based milestones.
+
+Your responsibility is to implement the entire application first, then perform comprehensive testing, identify problems, fix them, and deliver a working project.
+
+Do not stop after creating a plan, folder structure, database schema, or frontend prototype.
+
+---
+
+# 1. MOST IMPORTANT PROJECT RULES
+
+Before implementation:
+
+1. Read the complete `CLAUDE.md` from the project context.
+2. Follow every applicable design, coding, architecture, security, accessibility, and quality requirement.
+3. Treat `CLAUDE.md` as mandatory throughout development.
+4. Start with a clean project structure.
+5. Do not reuse the previous incomplete M0-M1 scaffold or its manually created migration.
+6. Do not copy code blindly from the previous implementation.
+7. Do not create a static demo or a frontend-only prototype.
+8. Implement real backend functionality and database persistence.
+9. Do not use mock data as a substitute for actual functionality.
+10. Do not ask me to approve every implementation stage.
+
+You may internally organize the work into logical stages, but complete all required features before requesting my review.
+
+If a genuinely blocking decision arises, explain it clearly. Otherwise, use sensible engineering defaults and continue.
+
+Do not claim that something works unless you have verified it.
+
+# 2. PRODUCT OVERVIEW
+
+Product name: TaskForge
+
+TaskForge is a full-stack task management and productivity platform inspired by Kanban-based applications such as Trello.
+
+Target audience:
+- Students
+- Developers
+- Individuals
+- Small teams
+
+Users should be able to organize their work through:
+
+User → Workspaces → Boards → Tasks
+
+The product should feel like a real productivity application that people can use daily.
+
+It must be suitable for a professional B.Tech Computer Science campus-placement portfolio.
+
+The objective is not to create the largest application. The objective is to create a complete, reliable, secure, maintainable, and visually distinctive product.
+
+# 3. REQUIRED TECHNOLOGY STACK
+
+Use the following stack.
+
+Frontend:
+- React
+- TypeScript
+- Vite
+- Tailwind CSS
+- React Router
+- Axios
+- Lucide React
+
+Backend:
+- Node.js
+- Express.js
+- TypeScript
+
+Database:
+- MySQL 8
+- Prisma ORM
+
+Authentication:
+- JWT
+- bcrypt
+- httpOnly cookies
+
+Validation:
+- Zod
+
+Testing:
+- Vitest
+- Supertest
+- React Testing Library
+- Appropriate additional testing utilities when needed
+
+Use compatible stable dependency versions. Do not blindly install release candidates or incompatible major versions.
+
+Do not replace the specified technologies without a compelling technical reason.
+
+Keep dependencies minimal.
+
+# 4. PROJECT STRUCTURE
+
+Use a monorepo with separate client and server applications.
+
+Expected structure:
+
+TaskForge/
+├── CLAUDE.md
+├── README.md
+├── package.json
+├── .gitignore
+├── client/
+│   ├── package.json
+│   ├── index.html
+│   ├── vite.config.ts
+│   └── src/
+│       ├── components/
+│       ├── pages/
+│       ├── layouts/
+│       ├── hooks/
+│       ├── services/
+│       ├── context/
+│       ├── types/
+│       ├── utils/
+│       ├── App.tsx
+│       ├── main.tsx
+│       └── index.css
+└── server/
+    ├── package.json
+    ├── prisma/
+    │   ├── schema.prisma
+    │   └── migrations/
+    ├── src/
+    │   ├── config/
+    │   ├── routes/
+    │   ├── controllers/
+    │   ├── services/
+    │   ├── middleware/
+    │   ├── validators/
+    │   ├── utils/
+    │   ├── app.ts
+    │   └── server.ts
+    └── tests/
+
+You can improve this structure when justified, but maintain separation of concerns.
+
+Use npm workspaces.
+
+Provide root-level scripts for installing, developing, building, testing, and typechecking the complete application.
+
+# 5. COMPLETE FUNCTIONAL REQUIREMENTS
+
+Implement every feature described below.
+
+## A. Authentication
+
+Implement:
+
+- User registration
+- User login
+- User logout
+- Authentication persistence after refresh
+- Protected frontend routes
+- Protected backend routes
+- Current user endpoint
+
+User fields:
+- ID
+- Name
+- Email
+- Password hash
+- Created timestamp
+- Updated timestamp
+
+Requirements:
+
+- Hash passwords using bcrypt.
+- Never store plain-text passwords.
+- Never expose password hashes.
+- Prevent duplicate email registration.
+- Validate registration and login input.
+- Use safe login error messages.
+- Use JWT with expiration.
+- Store JWT in an httpOnly cookie.
+- Configure Secure, SameSite, Path, and expiration appropriately.
+- Configure CORS and Axios credentials correctly.
+- Implement CSRF protection appropriate for cookie-based authentication.
+- Clear the authentication cookie on logout.
+- Handle expired and invalid sessions.
+- Add rate limiting to authentication endpoints.
+
+Do not implement social login or OAuth.
+
+## B. Dashboard
+
+Create a real authenticated dashboard.
+
+Include:
+
+- Personalized greeting using the authenticated user's name.
+- Workspace overview.
+- Recent boards.
+- Quick action to create a workspace.
+- Quick action to create a board.
+- Useful empty states.
+- Navigation to workspaces and boards.
+
+All displayed data must come from the backend.
+
+Do not invent user statistics, task counts, activity, testimonials, or other information.
+
+Recent boards must be ordered using actual database timestamps.
+
+## C. Workspace Management
+
+Implement complete CRUD:
+
+- Create workspace.
+- List current user's workspaces.
+- View workspace details.
+- Update workspace name.
+- Update workspace description.
+- Delete workspace.
+
+Workspace fields:
+
+- ID
+- Name
+- Description
+- Owner ID
+- Created timestamp
+- Updated timestamp
+
+Requirements:
+
+- Workspaces belong to their authenticated owner.
+- Users cannot access another user's workspace.
+- Show confirmation before deletion.
+- Handle empty workspaces.
+- Show the number of boards using real data.
+
+## D. Board Management
+
+Implement:
+
+- Create board inside a workspace.
+- List boards inside a workspace.
+- View board.
+- Update board name and description.
+- Delete board.
+
+Board fields:
+
+- ID
+- Name
+- Description
+- Workspace ID
+- Created timestamp
+- Updated timestamp
+
+Requirements:
+
+- Boards must belong to an owned workspace.
+- Verify ownership on every backend request.
+- Show confirmation before deletion.
+- Display actual task counts.
+- Provide useful empty states.
+
+## E. Kanban Board
+
+Every board must display three default statuses:
+
+1. To Do
+2. In Progress
+3. Done
+
+Use a task status enum:
+
+- TODO
+- IN_PROGRESS
+- DONE
+
+Requirements:
+
+- Display tasks in their correct columns.
+- Display accurate column counts.
+- Update the UI after task operations.
+- Allow users to move tasks through a status selector or Move to menu.
+- Keep task data synchronized with the backend.
+
+Drag-and-drop is outside the current scope.
+
+Do not implement customizable columns.
+
+## F. Task Management
+
+Implement complete CRUD:
+
+- Create task.
+- View task details.
+- Edit task.
+- Delete task.
+- Change task status.
+- Change task priority.
+- Set due date.
+- Update due date.
+
+Task fields:
+
+- ID
+- Title
+- Description
+- Priority
+- Status
+- Due date
+- Board ID
+- Created timestamp
+- Updated timestamp
+
+Priority:
+- LOW
+- MEDIUM
+- HIGH
+
+Status:
+- TODO
+- IN_PROGRESS
+- DONE
+
+Requirements:
+
+- Title is mandatory.
+- Description is optional.
+- Due date is optional.
+- Default priority is MEDIUM.
+- Default status is TODO.
+- Validate all input on the backend.
+- Verify task ownership through the board and workspace relationship.
+- Show confirmation before deleting.
+- Handle missing due dates and empty descriptions.
+- Display overdue tasks clearly using text as well as visual styling.
+
+Task cards should show:
+
+- Title
+- Priority label
+- Due date when available
+- Move to control
+
+Use a modal or drawer for viewing and editing task details.
+
+# 6. DATABASE DESIGN
+
+Create a proper Prisma schema.
+
+Minimum models:
+
+- User
+- Workspace
+- Board
+- Task
+
+Relationships:
+
+User → Workspaces → Boards → Tasks
+
+Use:
+
+- Primary keys
+- Foreign keys
+- Appropriate unique constraints
+- Indexes for common queries
+- Timestamps
+- Referential integrity
+
+Use task status and priority enums.
+
+Use appropriate cascade deletion rules.
+
+Prevent orphaned records.
+
+Use transactions when required.
+
+Use a date-only database representation for task due dates where supported, and handle date serialization consistently to prevent timezone-related date shifts.
+
+Generate valid Prisma migrations from the schema.
+
+Do not hand-write a migration as a substitute for running Prisma migration commands.
+
+Use the correct Prisma configuration and database adapter for the chosen stable Prisma version.
+
+Ensure the Prisma schema, migrations, and actual MySQL database structure remain consistent.
+
+# 7. BACKEND API
+
+Use REST API conventions.
+
+Base path:
+
+/api/v1
+
+Authentication:
+- POST /auth/register
+- POST /auth/login
+- POST /auth/logout
+- GET /auth/me
+
+Workspaces:
+- GET /workspaces
+- POST /workspaces
+- GET /workspaces/:id
+- PATCH /workspaces/:id
+- DELETE /workspaces/:id
+
+Boards:
+- GET /workspaces/:workspaceId/boards
+- POST /workspaces/:workspaceId/boards
+- GET /boards/:id
+- PATCH /boards/:id
+- DELETE /boards/:id
+- GET /boards/recent
+
+Tasks:
+- GET /boards/:boardId/tasks
+- POST /boards/:boardId/tasks
+- GET /tasks/:id
+- PATCH /tasks/:id
+- DELETE /tasks/:id
+
+Implement:
+
+- Controllers
+- Services
+- Routes
+- Middleware
+- Zod validators
+- Centralized error handling
+- Authentication middleware
+- Ownership authorization
+- Consistent API response structures
+
+Use appropriate HTTP status codes.
+
+Suggested response structure:
+
+Success:
+{ "data": {} }
+
+Error:
+{ "error": { "code": "VALIDATION_ERROR", "message": "Invalid input" } }
+
+Never expose stack traces, database credentials, or internal errors to the client.
+
+Every resource query must verify ownership through the relationship chain.
+
+# 8. FRONTEND APPLICATION
+
+Implement the following pages.
+
+Public:
+- Login
+- Register
+
+Protected:
+- Dashboard
+- Workspace details
+- Board/Kanban view
+
+Shared components:
+- App sidebar
+- Navigation
+- Header
+- Buttons
+- Inputs
+- Selects
+- Dialogs
+- Confirmation dialogs
+- Toast notifications
+- Loading indicators
+- Empty states
+- Error states
+- Task cards
+- Kanban columns
+- Workspace forms
+- Board forms
+- Task forms
+
+Requirements:
+
+- Use React Router.
+- Use Axios for API communication.
+- Implement authentication context.
+- Implement protected routes.
+- Handle authentication persistence.
+- Use reusable components.
+- Keep frontend types consistent with API responses.
+- Avoid unnecessary global state libraries.
+- Do not use `any` to bypass TypeScript errors.
+- Do not create oversized components containing the entire application.
+
+Every visible button, menu, form, and navigation item must perform its intended action.
+
+# 9. DESIGN SYSTEM AND VISUAL QUALITY
+
+This is a critical requirement.
+
+Follow the complete CLAUDE.md.
+
+Use the approved design direction:
+
+Workshop Ledger.
+
+Design characteristics:
+
+- Warm paper-inspired neutral backgrounds.
+- Graphite text.
+- Restrained teal accent.
+- Fine borders.
+- Compact information hierarchy.
+- Deliberate typography.
+- Clear task prioritization.
+- Functional layouts.
+- Minimal decorative effects.
+
+Approved initial palette:
+
+- Background: #F5F2EA
+- Surface: #FFFFFF
+- Text: #1E1D1A
+- Muted: #67625A
+- Border: #D9D4C7
+- Primary teal: #14606E
+- Primary hover: #0F4C58
+- Success: #2F6B3A
+- Warning: #8A5A00
+- Error: #B3261E
+
+Typography:
+
+- Headings: Bricolage Grotesque.
+- Body/UI: IBM Plex Sans.
+- Dates/counts: IBM Plex Mono.
+
+Use proper fallbacks and font-display: swap.
+
+Requirements:
+
+- Define reusable design tokens.
+- Maintain consistent spacing.
+- Use accessible contrast.
+- Avoid excessive shadows.
+- Avoid unnecessary gradients.
+- Avoid glassmorphism.
+- Avoid generic SaaS layouts.
+- Avoid decorative KPI cards.
+- Avoid meaningless statistics.
+- Avoid excessive badges.
+- Avoid oversized headings.
+- Avoid excessive rounded corners.
+- Avoid emoji-based navigation.
+- Do not use placeholder content to make the UI look populated.
+
+The application should look like a thoughtfully designed, professionally engineered productivity product.
+
+The Kanban board must be the central visual experience.
+
+Do not sacrifice usability for appearance.
+
+# 10. RESPONSIVE DESIGN
+
+Support:
+
+- 375px mobile
+- 768px tablet
+- 1024px laptop
+- 1440px desktop
+
+Requirements:
+
+- No unintended horizontal overflow.
+- Mobile navigation must work.
+- Forms and dialogs must fit smaller screens.
+- Kanban columns may scroll horizontally on mobile.
+- Keep columns clearly distinguishable.
+- Use accessible touch targets.
+- Prevent text clipping and component overlap.
+
+Follow the responsive requirements in CLAUDE.md.
+
+# 11. SECURITY AND VALIDATION
+
+Implement:
+
+- bcrypt password hashing.
+- Secure cookie-based JWT authentication.
+- CSRF protection.
+- CORS allow-list.
+- Rate limiting.
+- Zod validation.
+- Protected API routes.
+- Ownership checks.
+- Safe error handling.
+- Environment-based secrets.
+- Helmet security headers.
+- Request body limits.
+- Parameterized database access through Prisma.
+
+Do not trust frontend validation alone.
+
+Never use user-provided IDs without checking ownership.
+
+Use safe deletion behavior.
+
+# 12. FEATURES OUTSIDE THE CURRENT SCOPE
+
+Do not implement:
+
+- Drag-and-drop.
+- Socket.io.
+- Real-time collaboration.
+- Team invitations.
+- Advanced RBAC.
+- Comments.
+- Notifications.
+- Email notifications.
+- Analytics.
+- AI features.
+- Payments.
+- File attachments.
+- Custom Kanban columns.
+
+Keep the architecture reasonably extensible, but do not implement these features now.
+
+# 13. ENVIRONMENT AND SETUP
+
+The development environment is Windows 11.
+
+Prefer PowerShell-compatible commands.
+
+MySQL 8 is the preferred local database.
+
+Do not assume Docker is installed.
+
+Provide Docker Compose only as an optional alternative if useful.
+
+Create:
+
+- Root package.json
+- Client package.json
+- Server package.json
+- .env.example files
+- .gitignore
+- Prisma configuration
+- Prisma schema
+- Migration files
+- README.md
+
+Do not commit actual `.env` files or secrets.
+
+Validate required environment variables at server startup.
+
+Provide exact commands for:
+
+- Installing dependencies.
+- Configuring MySQL.
+- Creating the database and restricted database user.
+- Configuring environment variables.
+- Generating Prisma Client.
+- Applying migrations.
+- Starting the application.
+- Building the application.
+- Running tests.
+
+All commands must specify the correct working directory.
+
+# 14. TESTING — AFTER COMPLETE IMPLEMENTATION
+
+Do not stop implementation after the scaffold or a subset of features.
+
+Complete the entire application first.
+
+After all features have been implemented, run comprehensive verification.
+
+### Backend tests
+
+Test:
+
+- Registration
+- Duplicate registration
+- Login
+- Invalid login
+- Logout
+- Authentication persistence
+- Invalid and expired JWT
+- Workspace CRUD
+- Board CRUD
+- Task CRUD
+- Validation errors
+- Duplicate constraints
+- Unauthorized requests
+- Workspace ownership
+- Board ownership
+- Task ownership
+- Cascade deletion
+- Due date handling
+- CSRF protection
+
+### Frontend tests
+
+Test:
+
+- Login and registration forms
+- Form validation
+- Protected routes
+- Dashboard rendering
+- Workspace operations
+- Board operations
+- Task operations
+- Status changes
+- Priority changes
+- Error states
+- Loading states
+- Empty states
+
+### Integration testing
+
+Verify the complete flow:
+
+1. Register a new user.
+2. Log in.
+3. Create a workspace.
+4. Create a board.
+5. Create tasks.
+6. Move tasks between statuses.
+7. Change priorities.
+8. Set due dates.
+9. Edit tasks.
+10. Delete tasks.
+11. Refresh the application.
+12. Confirm database persistence.
+13. Log out.
+14. Attempt to access protected pages.
+15. Confirm that unauthorized users cannot access another user's resources.
+
+### Build and quality checks
+
+Run:
+
+- TypeScript typecheck
+- Frontend production build
+- Backend production build
+- Automated tests
+- Prisma validation
+- Prisma migration verification
+- Linting
+
+Fix all genuine issues discovered.
+
+Do not skip failed tests or hide errors.
+
+If a test cannot run because of an environment limitation, explain the limitation and provide the exact command I should run locally.
+
+### Visual verification
+
+Where browser access is available:
+
+- Open the application.
+- Test important user flows.
+- Inspect the dashboard.
+- Inspect workspace pages.
+- Inspect the Kanban board.
+- Inspect forms and dialogs.
+- Check mobile and desktop layouts.
+- Fix visual defects.
+
+If browser access is unavailable, provide a precise manual verification checklist.
+
+Never claim a visual check was performed when it was not.
+
+# 15. DOCUMENTATION
+
+Create a complete README.md.
+
+Include:
+
+1. Project overview.
+2. Features.
+3. Technology stack.
+4. Architecture.
+5. Folder structure.
+6. Prerequisites.
+7. MySQL setup.
+8. Environment variables.
+9. Installation.
+10. Prisma setup.
+11. Database migration.
+12. Running frontend and backend.
+13. Available scripts.
+14. API overview.
+15. Testing instructions.
+16. Troubleshooting.
+
+Include exact Windows PowerShell commands.
+
+# 16. IMPLEMENTATION EXPECTATIONS
+
+Work autonomously through the complete implementation.
+
+Do not repeatedly stop to ask for approval.
+
+Do not deliver only:
+- A plan.
+- A database schema.
+- An empty scaffold.
+- A frontend mockup.
+- A partially functional application.
+
+Implement all required features.
+
+Use clean, readable, maintainable TypeScript.
+
+Avoid:
+- Unnecessary abstractions.
+- Overengineering.
+- Duplicate code.
+- Giant components.
+- Hardcoded fake data.
+- Suppressed TypeScript errors.
+- Empty placeholder functions.
+- Dead buttons.
+- Incomplete API integrations.
+- Unnecessary dependencies.
+
+Make reasonable engineering decisions and document important trade-offs.
+
+If the environment prevents an operation, continue with the remaining work and clearly report what remains blocked.
+
+# 17. FINAL DELIVERY
+
+Once the complete implementation and final verification are finished, provide:
+
+1. Complete project folder structure.
+2. Features implemented.
+3. Important architecture decisions.
+4. Database schema summary.
+5. API endpoints implemented.
+6. Authentication and security implementation.
+7. UI pages and components created.
+8. Dependencies installed.
+9. Exact Windows setup commands.
+10. Exact commands to run the project.
+11. Test results with passed/failed counts.
+12. Typecheck results.
+13. Build results.
+14. Migration results.
+15. Visual verification results.
+16. Known issues and limitations.
+17. Any manual steps still required.
+
+Clearly distinguish:
+
+- Implemented and verified.
+- Implemented but not verified.
+- Not implemented.
+- Blocked by the environment.
+
+The final deliverable must be a complete project, not just code snippets.
+
+---
+
+# 18. START NOW
+
+First inspect the available project directory and the complete CLAUDE.md.
+
+Then start implementing TaskForge from scratch.
+
+Do not reuse the previous incomplete M0-M1 implementation.
+
+Do not stop after presenting an implementation plan.
+
+Do not wait for approval between milestones.
+
+Complete the frontend, backend, database integration, authentication, workspace management, board management, Kanban board, and task management.
+
+After the complete implementation, run the full testing and verification process, fix the issues, and prepare the final delivery report.
+
+**My expectation: one complete TaskForge Phase 1 application, followed by one comprehensive final testing and debugging cycle.**

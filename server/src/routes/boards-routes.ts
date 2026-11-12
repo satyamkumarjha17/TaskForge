@@ -1,0 +1,13 @@
+import { Router } from 'express';
+import * as controller from '../controllers/board-controller.js';
+import * as taskController from '../controllers/task-controller.js';
+import { validateBody, validateParams } from '../middleware/validate.js';
+import { boardIdSchema, boardSchema, idSchema, taskCreateSchema } from '../validators/schemas.js';
+const router = Router();
+router.get('/recent', controller.recent);
+router.get('/:id', validateParams(idSchema), controller.get);
+router.patch('/:id', validateParams(idSchema), validateBody(boardSchema.partial()), controller.update);
+router.delete('/:id', validateParams(idSchema), controller.remove);
+router.get('/:boardId/tasks', validateParams(boardIdSchema), taskController.list);
+router.post('/:boardId/tasks', validateParams(boardIdSchema), validateBody(taskCreateSchema), taskController.create);
+export default router;

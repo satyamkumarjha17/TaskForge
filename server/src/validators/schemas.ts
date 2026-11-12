@@ -1,0 +1,12 @@
+import { z } from 'zod';
+const id = z.string().min(1).max(30);
+const optionalDescription = z.string().trim().max(500).nullable().optional();
+export const registerSchema = z.object({ name: z.string().trim().min(2).max(80), email: z.string().trim().email().max(191).transform((v) => v.toLowerCase()), password: z.string().min(8).refine((v) => Buffer.byteLength(v, 'utf8') <= 72, 'Password must not exceed 72 UTF-8 bytes') });
+export const loginSchema = z.object({ email: z.string().trim().email().max(191).transform((v) => v.toLowerCase()), password: z.string().min(1).refine((v) => Buffer.byteLength(v, 'utf8') <= 72, 'Invalid credentials') });
+export const workspaceSchema = z.object({ name: z.string().trim().min(1).max(80), description: optionalDescription });
+export const boardSchema = z.object({ name: z.string().trim().min(1).max(80), description: optionalDescription });
+export const taskCreateSchema = z.object({ title: z.string().trim().min(1).max(160), description: z.string().trim().max(5000).nullable().optional(), priority: z.enum(['LOW', 'MEDIUM', 'HIGH']).default('MEDIUM'), status: z.enum(['TODO', 'IN_PROGRESS', 'DONE']).default('TODO'), dueDate: z.string().date().nullable().optional() });
+export const taskUpdateSchema = taskCreateSchema.partial();
+export const idSchema = z.object({ id });
+export const workspaceIdSchema = z.object({ workspaceId: id });
+export const boardIdSchema = z.object({ boardId: id });

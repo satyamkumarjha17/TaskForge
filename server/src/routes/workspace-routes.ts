@@ -1,0 +1,13 @@
+import { Router } from 'express';
+import * as controller from '../controllers/workspace-controller.js';
+import { validateBody, validateParams } from '../middleware/validate.js';
+import { idSchema, workspaceSchema, workspaceIdSchema } from '../validators/schemas.js';
+import boardRoutes from './board-routes.js';
+const router = Router();
+router.get('/', controller.list);
+router.post('/', validateBody(workspaceSchema), controller.create);
+router.get('/:id', validateParams(idSchema), controller.get);
+router.patch('/:id', validateParams(idSchema), validateBody(workspaceSchema.partial()), controller.update);
+router.delete('/:id', validateParams(idSchema), controller.remove);
+router.use('/:workspaceId/boards', validateParams(workspaceIdSchema), boardRoutes);
+export default router;

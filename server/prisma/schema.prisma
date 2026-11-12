@@ -1,0 +1,79 @@
+
+generator client {
+  provider            = "prisma-client"
+  output              = "../src/generated/prisma"
+  importFileExtension = "ts"
+}
+
+datasource db {
+  provider = "mysql"
+}
+
+enum TaskStatus {
+  TODO
+  IN_PROGRESS
+  DONE
+}
+
+enum TaskPriority {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+model User {
+  id           String      @id @default(cuid()) @db.VarChar(30)
+  name         String      @db.VarChar(80)
+  email        String      @unique @db.VarChar(191)
+  passwordHash String      @db.VarChar(255)
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+  workspaces   Workspace[]
+
+  @@map("users")
+}
+
+model Workspace {
+  id          String   @id @default(cuid()) @db.VarChar(30)
+  name        String   @db.VarChar(80)
+  description String?  @db.VarChar(500)
+  ownerId     String   @db.VarChar(30)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  owner       User     @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  boards      Board[]
+
+  @@index([ownerId, updatedAt])
+  @@map("workspaces")
+}
+
+model Board {
+  id          String    @id @default(cuid()) @db.VarChar(30)
+  name        String    @db.VarChar(80)
+  description String?   @db.VarChar(500)
+  workspaceId String    @db.VarChar(30)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  tasks       Task[]
+
+  @@index([workspaceId, updatedAt])
+  @@map("boards")
+}
+
+model Task {
+  id          String       @id @default(cuid()) @db.VarChar(30)
+  title       String       @db.VarChar(160)
+  description String?      @db.Text
+  priority    TaskPriority @default(MEDIUM)
+  status      TaskStatus   @default(TODO)
+  dueDate     DateTime?    @db.Date
+  boardId     String       @db.VarChar(30)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  board       Board        @relation(fields: [boardId], references: [id], onDelete: Cascade)
+
+  @@index([boardId, status, updatedAt])
+  @@index([boardId, dueDate])
+  @@map("tasks")
+}
